@@ -28,7 +28,7 @@ describe('=================Test Slot=====================', () => {
        })
    });
 
-    it(`${EXPECTED_TIME} games should take less then 1 second`, () => {
+    it(`${NUMBER_OF_GAMES} games should take less then ${EXPECTED_TIME} millisecond`, () => {
         const startTime = new Date();
         for(let ind = 0; ind < NUMBER_OF_GAMES; ind++) {
             slot.start();

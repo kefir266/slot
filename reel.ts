@@ -15,6 +15,8 @@ export class Reel {
     private head: Symbol;
     private length: number;
     private heightView: number;
+    private columnView:ColumnView = { stopPosition: 0, view: [] };
+    private currentView = this.current;
 
     constructor(reel: number[], heightView: number) {
         this.heightView = heightView;
@@ -42,16 +44,17 @@ export class Reel {
     }
 
     private accelerate(): number {
-        return Math.random() * 10 * this.length + this.length;
+        return Math.random() * this.length;
     }
 
     public getViewColumn():ColumnView {
-        const column = [];
-        let view = this.current;
+
+        this.currentView = this.current;
         for (let ind = 0; ind < this.heightView; ind++) {
-            column.push(view.symbol);
-            view = view.next;
+            this.columnView.view[ind] = this.currentView.symbol;
+            this.currentView = this.currentView.next;
         }
-        return {stopPosition: this.current.position, view: column}
+        this.columnView.stopPosition = this.current.position;
+        return this.columnView;
     }
 }

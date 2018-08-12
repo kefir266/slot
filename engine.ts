@@ -1,14 +1,13 @@
 import {Reel, ColumnView} from "./reel";
 import {Config, SpinRewards} from "./game";
+import {isNumber} from "util";
 
 
-
-export interface State{
+export interface State {
     stopPositions: number[];
     view: number [][];
     rewards: SpinRewards[]
 }
-
 
 
 export class Engine {
@@ -18,6 +17,7 @@ export class Engine {
     viewHeight: number;
     state: State;
     lines: number[][];
+    private spinReward: SpinRewards = {lineId: 0, symbol: 0, payout: 0};
 
     constructor(config: Config) {
         //take height in fist element, because suggested that height constantly
@@ -32,7 +32,7 @@ export class Engine {
     }
 
     private initView() {
-        this.state = { stopPositions: [], view: [], rewards: [] };
+        this.state = {stopPositions: [], view: [], rewards: []};
         for (let ind = 0; ind < this.viewHeight; ind++) {
             this.state.view[ind] = [];
         }
@@ -40,16 +40,15 @@ export class Engine {
 
     start(): State {
 
-        let columns = this.reels.map(reel => {
-                return reel.rotate();
-        });
-                this.mergeVIew(columns);
-                this.determineRewards();
-                return this.state;
+        this.mergeVIew(this.reels.map(reel => {
+            return reel.rotate();
+        }));
+        this.determineRewards();
+        return this.state;
 
     }
 
-    private mergeVIew( columns: ColumnView[] ) {
+    private mergeVIew(columns: ColumnView[]) {
         for (let col = 0; col < columns.length; col++) {
             this.state.stopPositions[col] = columns[col].stopPosition;
             for (let line = 0; line < this.viewHeight; line++) {
@@ -60,15 +59,17 @@ export class Engine {
 
     private determineRewards(): State {
 
-        this.state.rewards = this.lines.map( line => {
-            let spinReward:SpinRewards = { lineId: line[0], symbol: this.state.view[line[0]][0], payout: 0 };
-            const lineReward = line.map( (lineId, ind) => {
+        this.state.rewards = this.lines.map(line => {
+            this.spinReward.lineId = line[0];
+            this.spinReward.symbol = this.state.view[line[0]][0];
+            this.spinReward.payout = 0;
+            const lineReward = line.map((lineId, ind) => {
                 return this.state.view[line[lineId]][ind]
             });
-            if (lineReward.every( spin => {
-                return spinReward.symbol === spin
+            if (lineReward.every(spin => {
+                    return this.spinReward.symbol === spin
                 })) {
-                return spinReward
+                return this.spinReward
             }
         })
             .filter(reward => reward);

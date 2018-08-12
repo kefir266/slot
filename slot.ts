@@ -10,18 +10,20 @@ export class Slot extends Engine {
         super(config);
         this.config = config;
         this.bet = bet;
-        this.init();
-
-    }
-
-    init() {
         this.result = {
             stopPositions: [],
             view: [],
             rewards: [],
             bet: this.bet,
             win: 0
-        }
+        };
+        this.init();
+
+    }
+
+    init() {
+        this.result.rewards.length = 0;
+        this.result.win = 0
     }
 
     start(): SpinResult {
