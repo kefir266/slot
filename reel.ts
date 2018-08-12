@@ -29,20 +29,16 @@ export class Reel {
         });
         this.current.next = this.head;
         this.length = this.current.position + 1;
+        //rotate to 0 position
+        this.current = this.current.next;
     }
 
-    public rotate(): Promise<ColumnView> {
+    public rotate(): ColumnView {
         for(let pos = 0; pos < this.accelerate(); pos++) {
             this.current = this.current.next;
         }
-        //TODO set timeout
 
-
-        return new Promise (resolve => {
-            setImmediate( () => {
-                resolve(this.getViewColumn());
-            })
-        });
+        return this.getViewColumn();
     }
 
     private accelerate(): number {

@@ -4,25 +4,28 @@ import {Slot} from "./slot";
 export class TTGama extends Game {
     config: Config;
 
+    NUMBER_OF_GAMES = 1000000000;
+
     constructor(config: Config) {
         super(config);
         this.config = config
     }
 
-    play(request: SpinRequest): Promise<SpinResult| any> {
+    play(request: SpinRequest) {
 
-        const slots: Slot[] = [];
+        let wins = 0;
+        let loses = 0;
+        const slot = new Slot(this.config, request.bet);
 
-        for (let ind = 0; ind < 100000; ind++) {
-            if (!(ind % 1000)) console.log(`Game ${ind} created`);
-            slots.push(new Slot(this.config, 2));
+        console.log(`Started ${this.NUMBER_OF_GAMES} games at ${new Date()}`);
+        for (let ind = 0; ind < this.NUMBER_OF_GAMES; ind++) {
+            slot.init();
+            let result = slot.start();
+
+            if (result.win) wins++;
+            else loses++;
         }
-        console.log('Games created');
-
-        const games = slots.map( slot => slot.start() );
-
-            return Promise.all(games);
-        }
-
-
+        console.log(`Games have been finished at ${new Date()}`);
+        console.log('wins/loses:', wins/loses);
     }
+}

@@ -31,5 +31,5 @@ export abstract class Game {
     constructor(protected config: Config) {
     }
 
-    abstract play(request: SpinRequest): Promise<SpinResult> ;
+    abstract play(request: SpinRequest): void;
 }

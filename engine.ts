@@ -38,15 +38,15 @@ export class Engine {
         }
     }
 
-    start(): Promise<State> {
-        return Promise.all(
-            this.reels.map(reel => {
+    start(): State {
+
+        let columns = this.reels.map(reel => {
                 return reel.rotate();
-        }))
-            .then(columns => {
+        });
                 this.mergeVIew(columns);
-                return this.determineRewards();
-            });
+                this.determineRewards();
+                return this.state;
+
     }
 
     private mergeVIew( columns: ColumnView[] ) {

@@ -10,32 +10,34 @@ export class Slot extends Engine {
         super(config);
         this.config = config;
         this.bet = bet;
+        this.init();
+
+    }
+
+    init() {
         this.result = {
             stopPositions: [],
             view: [],
             rewards: [],
-            bet: bet,
+            bet: this.bet,
             win: 0
         }
-
     }
 
-    start(): Promise<SpinResult>  {
-        return super.start()
-            .then(views => {
-                this.result.stopPositions = views.stopPositions;
-                this.result.view = views.view;
-                this.result.rewards = views.rewards;
-                this.calculateRewards();
-                if (this. result.rewards.length) console.log(this.result);
-                return this.result;
-            });
+    start(): SpinResult {
+        let views = super.start();
+
+        this.result.stopPositions = views.stopPositions;
+        this.result.view = views.view;
+        this.result.rewards = views.rewards;
+        this.calculateRewards();
+        return this.result;
     }
 
-    private calculateRewards()
-    {
+    private calculateRewards() {
         this.result.rewards.forEach(reward => {
             reward.payout = this.bet * this.config.payouts[reward.symbol - 1];
+            this.result.win += reward.payout;
         })
     }
 }
