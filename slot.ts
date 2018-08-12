@@ -1,0 +1,41 @@
+import {Engine, State} from "./engine";
+import {Config, SpinResult, SpinRewards} from "./game";
+
+export class Slot extends Engine {
+    result: SpinResult;
+    config: Config;
+    bet: number;
+
+    constructor(config: Config, bet: number) {
+        super(config);
+        this.config = config;
+        this.bet = bet;
+        this.result = {
+            stopPositions: [],
+            view: [],
+            rewards: [],
+            bet: bet,
+            win: 0
+        }
+
+    }
+
+    start(): Promise<SpinResult>  {
+        return super.start()
+            .then(views => {
+                this.result.stopPositions = views.stopPositions;
+                this.result.view = views.view;
+                this.result.rewards = views.rewards;
+                this.calculateRewards();
+                if (this. result.rewards.length) console.log(this.result);
+                return this.result;
+            });
+    }
+
+    private calculateRewards()
+    {
+        this.result.rewards.forEach(reward => {
+            reward.payout = this.bet * this.config.payouts[reward.symbol - 1];
+        })
+    }
+}

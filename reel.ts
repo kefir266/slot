@@ -1,3 +1,4 @@
+
 interface Symbol {
     symbol: number;
     next?: Symbol;
@@ -37,7 +38,11 @@ export class Reel {
         //TODO set timeout
 
 
-        return Promise.resolve(this.getViewColumn());
+        return new Promise (resolve => {
+            setImmediate( () => {
+                resolve(this.getViewColumn());
+            })
+        });
     }
 
     private accelerate(): number {

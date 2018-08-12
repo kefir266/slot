@@ -1,9 +1,9 @@
-import {Reel, ColumnView} from "./Reel";
+import {Reel, ColumnView} from "./reel";
 import {Config, SpinRewards} from "./game";
 
 
 
-interface State{
+export interface State{
     stopPositions: number[];
     view: number [][];
     rewards: SpinRewards[]
@@ -19,12 +19,12 @@ export class Engine {
     state: State;
     lines: number[][];
 
-    constructor(reels: number[][], config: Config) {
+    constructor(config: Config) {
         //take height in fist element, because suggested that height constantly
         this.viewHeight = config.view[0];
         this.lines = config.lines;
 
-        reels.forEach((reel, index) => {
+        config.reels.forEach((reel, index) => {
             this.reels.push(new Reel(reel, config.view[index]));
         });
 

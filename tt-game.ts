@@ -1,5 +1,5 @@
-import {Game, SpinRequest, SpinResult, Config} from "./game";
-import {Engine} from "./engine";
+import {Game, SpinRequest, SpinResult, Config, SpinRewards} from "./game";
+import {Slot} from "./slot";
 
 export class TTGama extends Game {
     config: Config;
@@ -9,22 +9,20 @@ export class TTGama extends Game {
         this.config = config
     }
 
-    play(request: SpinRequest): Promise<SpinResult> {
-        const engine = new Engine(this.config.reels, this.config);
-        const result: SpinResult = {
-            stopPositions: [],
-            view: [],
-            rewards: [],
-            bet: request.bet,
-            win: 0
-        };
-        return engine.start()
-            .then(views => {
-                result.stopPositions = views.stopPositions;
-                result.view = views.view;
-                result.rewards = views.rewards;
-                console.log(result);
-                return this.play(request);
-            });
+    play(request: SpinRequest): Promise<SpinResult| any> {
+
+        const slots: Slot[] = [];
+
+        for (let ind = 0; ind < 100000; ind++) {
+            if (!(ind % 1000)) console.log(`Game ${ind} created`);
+            slots.push(new Slot(this.config, 2));
+        }
+        console.log('Games created');
+
+        const games = slots.map( slot => slot.start() );
+
+            return Promise.all(games);
+        }
+
+
     }
-}
