@@ -1,12 +1,10 @@
-import {Game, SpinRequest, SpinResult, Config, SpinRewards} from "./game";
+import {Game, SpinRequest, Config} from "./game";
 import {Slot} from "./slot";
 const clui = require('clui');
-const Gauge = clui.Gauge;
-const Line:any = clui.Line;
-const LineBuffer: any = clui.LineBuffer;
+const Line: any = clui.Line;
 const clear = clui.Clear;
 const Progress = clui.Progress;
-const thisProgressBar:any = new Progress(30);
+const thisProgressBar: any = new Progress(30);
 
 clear();
 
@@ -17,7 +15,7 @@ export class TTGama extends Game {
 
     constructor(config: Config) {
         super(config);
-        this.config = config
+        this.config = config;
     }
 
     play(request: SpinRequest) {
@@ -29,7 +27,7 @@ export class TTGama extends Game {
         console.log(`Started ${this.NUMBER_OF_GAMES} games at ${startTime}`);
         for (let ind = 0; ind < this.NUMBER_OF_GAMES; ind++) {
             slot.init();
-            let result = slot.start();
+            const result = slot.start();
 
             if (result.win) wins++;
             else loses++;

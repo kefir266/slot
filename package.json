@@ -20,6 +20,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
-    "chai": "^4.1.2"
+    "chai": "^4.1.2",
+    "tslint": "^5.11.0"
   }
 }

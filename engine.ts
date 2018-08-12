@@ -6,7 +6,7 @@ import {isNumber} from "util";
 export interface State {
     stopPositions: number[];
     view: number [][];
-    rewards: SpinRewards[]
+    rewards: SpinRewards[];
 }
 
 
@@ -64,15 +64,15 @@ export class Engine {
             this.spinReward.symbol = this.state.view[line[0]][0];
             this.spinReward.payout = 0;
             const lineReward = line.map((lineId, ind) => {
-                return this.state.view[line[lineId]][ind]
+                return this.state.view[line[lineId]][ind];
             });
             if (lineReward.every(spin => {
-                    return this.spinReward.symbol === spin
+                    return this.spinReward.symbol === spin;
                 })) {
-                return this.spinReward
+                return this.spinReward;
             }
         })
             .filter(reward => reward);
-        return this.state
+        return this.state;
     }
 }

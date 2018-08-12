@@ -24,8 +24,8 @@ describe('=================Test Slot=====================', () => {
        expect(result.bet).equal(bet);
        expect(result.stopPositions.length).equal(config.view.length);
        result.view.forEach((line, ind) => {
-           expect(line.length).equal(config.lines[ind].length)
-       })
+           expect(line.length).equal(config.lines[ind].length);
+       });
    });
 
     it(`${NUMBER_OF_GAMES} games should take less then ${EXPECTED_TIME} millisecond`, () => {

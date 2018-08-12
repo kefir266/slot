@@ -1,5 +1,5 @@
-import {Engine, State} from "./engine";
-import {Config, SpinResult, SpinRewards} from "./game";
+import {Engine} from "./engine";
+import {Config, SpinResult} from "./game";
 
 export class Slot extends Engine {
     result: SpinResult;
@@ -18,16 +18,15 @@ export class Slot extends Engine {
             win: 0
         };
         this.init();
-
     }
 
     init() {
         this.result.rewards.length = 0;
-        this.result.win = 0
+        this.result.win = 0;
     }
 
     start(): SpinResult {
-        let views = super.start();
+        const views = super.start();
 
         this.result.stopPositions = views.stopPositions;
         this.result.view = views.view;
@@ -40,6 +39,6 @@ export class Slot extends Engine {
         this.result.rewards.forEach(reward => {
             reward.payout = this.bet * this.config.payouts[reward.symbol - 1];
             this.result.win += reward.payout;
-        })
+        });
     }
 }

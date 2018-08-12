@@ -35,7 +35,7 @@ export class Reel {
         this.current = this.current.next;
     }
 
-    public rotate(): ColumnView {
+    rotate(): ColumnView {
         for(let pos = 0; pos < this.accelerate(); pos++) {
             this.current = this.current.next;
         }
@@ -47,7 +47,7 @@ export class Reel {
         return Math.random() * this.length;
     }
 
-    public getViewColumn():ColumnView {
+    getViewColumn():ColumnView {
 
         this.currentView = this.current;
         for (let ind = 0; ind < this.heightView; ind++) {
