@@ -35,8 +35,8 @@ export class Reel {
         this.current = this.current.next;
     }
 
-    rotate(): ColumnView {
-        for(let pos = 0; pos < this.accelerate(); pos++) {
+    rotate(position: number | null = null): ColumnView {
+        for(let pos = 0; pos < (position || this.accelerate()); pos++) {
             this.current = this.current.next;
         }
 
@@ -56,5 +56,10 @@ export class Reel {
         }
         this.columnView.stopPosition = this.current.position;
         return this.columnView;
+    }
+
+    setPosition(position: number) {
+        this.current = this.head;
+        this.rotate(position);
     }
 }

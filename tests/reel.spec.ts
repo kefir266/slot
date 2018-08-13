@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ColumnView, Reel} from "./reel";
+import {ColumnView, Reel} from "../models/reel";
 let reel: Reel;
 let view: ColumnView;
 const height = 3;

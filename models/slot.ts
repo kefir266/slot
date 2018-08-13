@@ -20,13 +20,16 @@ export class Slot extends Engine {
         this.init();
     }
 
-    init() {
+    init(positions: number[] | null = null) {
         this.result.rewards.length = 0;
         this.result.win = 0;
+        if (positions) {
+            super.setPositions(positions);
+        }
     }
 
-    start(): SpinResult {
-        const views = super.start();
+    start(dontRotate: boolean): SpinResult {
+        const views = super.start(dontRotate);
 
         this.result.stopPositions = views.stopPositions;
         this.result.view = views.view;

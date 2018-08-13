@@ -27,7 +27,7 @@ export class TTGama extends Game {
         console.log(`Started ${this.NUMBER_OF_GAMES} games at ${startTime}`);
         for (let ind = 0; ind < this.NUMBER_OF_GAMES; ind++) {
             slot.init();
-            const result = slot.start();
+            const result = slot.start(false);
 
             if (result.win) wins++;
             else loses++;
@@ -43,5 +43,8 @@ export class TTGama extends Game {
         }
         console.log(`Games have been finished at ${new Date()}`);
         console.log('wins/loses:', wins/loses);
+        return `Started ${this.NUMBER_OF_GAMES} games at ${startTime}
+Games have been finished at ${new Date()}
+wins/loses: ${wins/loses}`;
     }
 }

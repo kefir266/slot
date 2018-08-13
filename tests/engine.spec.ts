@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {Engine, State} from "./engine";
-import {config} from "./config";
+import {Engine, State} from "../models/engine";
+import {config} from "../config/config";
 
 let engine: Engine;
 
@@ -26,8 +26,8 @@ describe('=================Test Engine===================', () => {
     it('should have valid view', () => {
         expect(result.view.length).equal(config.view[0]);
         result.view.forEach((line, ind) => {
-            expect(line.length).equal(config.lines[ind].length)
-        })
+            expect(line.length).equal(config.lines[ind].length);
+        });
     });
 
 });

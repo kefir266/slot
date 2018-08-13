@@ -1,4 +1,4 @@
-import {Config} from "./game";
+import {Config} from "../models/game";
 
 export const config: Config = {
     symbols: [1, 2, 3, 4, 5],

@@ -1,14 +1,11 @@
 import {Reel, ColumnView} from "./reel";
 import {Config, SpinRewards} from "./game";
-import {isNumber} from "util";
-
 
 export interface State {
     stopPositions: number[];
     view: number [][];
     rewards: SpinRewards[];
 }
-
 
 export class Engine {
     reels: Reel[] = [];
@@ -38,10 +35,14 @@ export class Engine {
         }
     }
 
-    start(): State {
+    start(dontRotate = false): State {
 
         this.mergeVIew(this.reels.map(reel => {
-            return reel.rotate();
+            if (dontRotate) {
+                return reel.getViewColumn();
+            } else {
+                return reel.rotate();
+            }
         }));
         this.determineRewards();
         return this.state;
@@ -74,5 +75,11 @@ export class Engine {
         })
             .filter(reward => reward);
         return this.state;
+    }
+
+    setPositions(positions: number []) {
+        positions.forEach( (position, ind) => {
+            this.reels[ind].setPosition(position);
+        });
     }
 }

@@ -4,7 +4,7 @@
   "description": "Test assigment",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register *.spec.ts",
+    "test": "mocha -r ts-node/register ./tests/*.spec.ts",
     "start": "node $NODE_DEBUG_OPTION ./node_modules/.bin/ts-node -- ./index.ts"
   },
   "author": "Kefir",
