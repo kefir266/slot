@@ -18,6 +18,33 @@ const positions = [
     [2, 1, 6, 5, 4]
 ];
 
+const losePlay = [0, 1, 2, 3, 4];
+const loseResult: SpinResult = {
+    stopPositions: [0, 1, 2, 3, 4],
+    view: [
+        [5,	1,	5,	2,	1],
+        [3,	2,	4,	4,	4],
+        [1,	2,	2,	1,	1]],
+    rewards: [],
+    bet: 1,
+    win: 0
+};
+const winPlay = [2, 1, 6, 5, 4];
+const winResult: SpinResult = {
+    stopPositions: [2, 1, 6, 5, 4],
+    view: [
+        [1,	1,	1,	1,	1],
+        [4,	2,	3,	5,	4],
+        [5,	2,	3,	4,	1]],
+    rewards: [{
+        lineId: 1,
+        symbol: 1,
+        payout: 10
+    }],
+    bet: 2,
+    win: 10
+};
+
 describe('=================Test Slot=====================', () => {
     it('should create Slot', () => {
         slot = new Slot(config, 2);
@@ -56,5 +83,16 @@ describe('=================Test Slot=====================', () => {
             else loses++;
         });
         expect(wins / loses).within(0.01, 0.2);
+    });
+
+    it('should have correct response', () => {
+        let result;
+        slot.init(losePlay);
+        result = slot.start(true, 1);
+        expect(result).deep.equal(loseResult);
+
+        slot.init(winPlay);
+        result = slot.start(true, 2);
+        expect(result).deep.equal(winResult);
     });
 });

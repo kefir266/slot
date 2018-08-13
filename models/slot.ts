@@ -28,12 +28,15 @@ export class Slot extends Engine {
         }
     }
 
-    start(dontRotate: boolean): SpinResult {
+    start( dontRotate: boolean, newBet = NaN): SpinResult {
+        if (!!newBet)  {
+            this.bet = newBet;
+        }
         const views = super.start(dontRotate);
-
         this.result.stopPositions = views.stopPositions;
         this.result.view = views.view;
         this.result.rewards = views.rewards;
+        this.result.bet = this.bet;
         this.calculateRewards();
         return this.result;
     }

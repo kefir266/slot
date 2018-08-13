@@ -36,7 +36,8 @@ export class Reel {
     }
 
     rotate(position: number | null = null): ColumnView {
-        for(let pos = 0; pos < (position || this.accelerate()); pos++) {
+        const pos = position !== null ? position : this.accelerate();
+        for(let ind = 0; ind < pos; ind++) {
             this.current = this.current.next;
         }
 

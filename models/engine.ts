@@ -14,7 +14,6 @@ export class Engine {
     viewHeight: number;
     state: State;
     lines: number[][];
-    private spinReward: SpinRewards = {lineId: 0, symbol: 0, payout: 0};
 
     constructor(config: Config) {
         //take height in fist element, because suggested that height constantly
@@ -61,16 +60,14 @@ export class Engine {
     private determineRewards(): State {
 
         this.state.rewards = this.lines.map(line => {
-            this.spinReward.lineId = line[0];
-            this.spinReward.symbol = this.state.view[line[0]][0];
-            this.spinReward.payout = 0;
+            const spinReward: SpinRewards = {lineId: line[0], symbol: this.state.view[line[0]][0], payout: 0};
             const lineReward = line.map((lineId, ind) => {
-                return this.state.view[line[lineId]][ind];
+                return this.state.view[lineId][ind];
             });
             if (lineReward.every(spin => {
-                    return this.spinReward.symbol === spin;
-                })) {
-                return this.spinReward;
+                return spinReward.symbol === spin;
+            })) {
+                return spinReward;
             }
         })
             .filter(reward => reward);
@@ -78,7 +75,7 @@ export class Engine {
     }
 
     setPositions(positions: number []) {
-        positions.forEach( (position, ind) => {
+        positions.forEach((position, ind) => {
             this.reels[ind].setPosition(position);
         });
     }
