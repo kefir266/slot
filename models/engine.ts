@@ -59,8 +59,8 @@ export class Engine {
 
     private determineRewards(): State {
 
-        this.state.rewards = this.lines.map(line => {
-            const spinReward: SpinRewards = {lineId: line[0], symbol: this.state.view[line[0]][0], payout: 0};
+        this.state.rewards = this.lines.map((line, lineId) => {
+            const spinReward: SpinRewards = {lineId: lineId, symbol: this.state.view[line[0]][0], payout: 0};
             const lineReward = line.map((lineId, ind) => {
                 return this.state.view[lineId][ind];
             });
