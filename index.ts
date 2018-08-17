@@ -1,7 +1,5 @@
-import {config} from "./config/config";
 import * as child from 'child_process';
 import * as os from 'os';
-import {ForkOptions} from "child_process";
 
 const NUMBER_OF_GAMES = 1000000000;
 const slotWorker = './models/tt-game.ts';

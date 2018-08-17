@@ -4,10 +4,10 @@ const argsParser = require("args-parser");
 
 const args = argsParser(process.argv);
 
-const NUMBER_OF_GAMES = +args.numbersOfGames;
+const NUMBER_OF_GAMES = +args.numbersOfGames || 1;
 const games = {wins: 0, loses: 0};
 
-const slot = new Slot(config, +args.bet);
+const slot = new Slot(config, +args.bet || 1);
 
 for (let ind = 0; ind < NUMBER_OF_GAMES; ind++) {
     slot.init();
@@ -18,8 +18,4 @@ for (let ind = 0; ind < NUMBER_OF_GAMES; ind++) {
 
 process.send(games);
 
-//         console.log('wins/loses:', wins/loses);
-//         return `Started ${this.NUMBER_OF_GAMES} games at ${startTime}
-// Games have been finished at ${new Date()}
-// wins/loses: ${wins/loses}`;
 
