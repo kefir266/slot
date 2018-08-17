@@ -1,10 +1,39 @@
-import { TTGama } from "./models/tt-game";
 import {config} from "./config/config";
-import * as fs from "fs";
-const ttGame = new TTGama(config);
+import * as child from 'child_process';
+import * as os from 'os';
+import {ForkOptions} from "child_process";
 
-fs.writeFile('./output/result.log', ttGame.play({bet: 2}),err => {
-    if (err) {
-        console.log(err);
-    }
+const NUMBER_OF_GAMES = 1000000000;
+const slotWorker = './models/tt-game.ts';
+
+const numOfCpus = os.cpus().length;
+const params: ReadonlyArray<string> = [`--numbersOfGames=${NUMBER_OF_GAMES}`, `--bet=1`];
+
+const games = {wins: 0, loses: 0};
+const startTime = new Date();
+
+console.log(`Started ${NUMBER_OF_GAMES} games at ${startTime}`);
+
+if (process.execArgv.toString().indexOf('--inspect-brk') !== -1) {
+    const port = Math.round(Math.random() * new Date().getSeconds() / 1000);
+    process.execArgv.push(`--inspect-brk=${port}`);
+}
+
+for (let ind = 0; ind < numOfCpus; ind++) {
+    const inst = child.fork(slotWorker, params)
+        .on('exit', res => {
+            console.log(`Games have been finished at ${new Date()}`);
+        })
+        .on('message', msg => {
+            if (msg.loses) {
+                games.wins += msg.wins;
+                games.loses += msg.loses;
+            }
+        });
+}
+
+process.on("beforeExit", () => {
+    console.log('Wins/Loses = ', games.loses === 0 ? 0 : games.wins / games.loses);
 });
+
+
