@@ -1,5 +1,6 @@
 import * as child from 'child_process';
 import * as os from 'os';
+import * as fs from "fs";
 
 const NUMBER_OF_GAMES = 1000000000;
 const slotWorker = './models/tt-game.ts';
@@ -10,6 +11,7 @@ const params: ReadonlyArray<string> = [`--numbersOfGames=${NUMBER_OF_GAMES}`, `-
 const games = {wins: 0, loses: 0};
 const startTime = new Date();
 
+fs.writeFile('./output/result.log', `Started ${NUMBER_OF_GAMES} games at ${startTime}\n`, errorHandler);
 console.log(`Started ${NUMBER_OF_GAMES} games at ${startTime}`);
 
 if (process.execArgv.toString().indexOf('--inspect-brk') !== -1) {
@@ -20,7 +22,8 @@ if (process.execArgv.toString().indexOf('--inspect-brk') !== -1) {
 for (let ind = 0; ind < numOfCpus; ind++) {
     const inst = child.fork(slotWorker, params)
         .on('exit', res => {
-            console.log(`Games have been finished at ${new Date()}`);
+            console.log(`Games ${ind} have been finished at ${new Date()}`);
+            fs.appendFile('./output/result.log', `Games ${ind} have been finished at ${new Date()}\n`, errorHandler);
         })
         .on('message', msg => {
             if (msg.loses) {
@@ -30,8 +33,12 @@ for (let ind = 0; ind < numOfCpus; ind++) {
         });
 }
 
-process.on("beforeExit", () => {
-    console.log('Wins/Loses = ', games.loses === 0 ? 0 : games.wins / games.loses);
+process.on("exit", () => {
+    fs.appendFileSync('./output/result.log', `Wins/Loses = ${games.wins/games.loses}\n`);
 });
 
-
+function errorHandler(err: Error) {
+    if (err) {
+        console.log(err);
+    }
+}
