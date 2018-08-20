@@ -1,5 +1,6 @@
 import {Reel, ColumnView} from "./reel";
 import {Config, SpinRewards} from "./game";
+import {ReelArray} from "./reelArrary";
 
 export interface State {
     stopPositions: number[];
@@ -8,20 +9,20 @@ export interface State {
 }
 
 export class Engine {
-    reels: Reel[] = [];
+    reels: Array<Reel | ReelArray> = [];
     // I don't image how to handle views with different heights,
     // so I admit that number of symbols in the column is constant
     viewHeight: number;
     state: State;
     lines: number[][];
 
-    constructor(config: Config) {
+    constructor(config: Config, rotatedReel = true) {
         //take height in fist element, because suggested that height constantly
         this.viewHeight = config.view[0];
         this.lines = config.lines;
-
+        const reelModel = rotatedReel ? Reel: ReelArray;
         config.reels.forEach((reel, index) => {
-            this.reels.push(new Reel(reel, config.view[index]));
+            this.reels.push(new reelModel(reel, config.view[index]));
         });
 
         this.initView();

@@ -6,8 +6,8 @@ export class Slot extends Engine {
     config: Config;
     bet: number;
 
-    constructor(config: Config, bet: number) {
-        super(config);
+    constructor(config: Config, bet: number, rolling = false) {
+        super(config, rolling);
         this.config = config;
         this.bet = bet;
         this.result = {
