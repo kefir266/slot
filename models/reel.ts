@@ -1,5 +1,5 @@
 
-interface Symbol {
+export interface Symbol {
     symbol: number;
     next?: Symbol;
     position: number;
@@ -7,7 +7,7 @@ interface Symbol {
 
 export interface ColumnView {
     stopPosition: number;
-    view: number[];
+    view: Symbol[];
 }
 
 export class Reel {
@@ -33,6 +33,7 @@ export class Reel {
         this.length = this.current.position + 1;
         //rotate to 0 position
         this.current = this.current.next;
+        this.setColumnView();
     }
 
     rotate(position: number | null = null): ColumnView {
@@ -40,7 +41,7 @@ export class Reel {
         for(let ind = 0; ind < pos; ind++) {
             this.current = this.current.next;
         }
-
+        this.setColumnView();
         return this.getViewColumn();
     }
 
@@ -48,19 +49,26 @@ export class Reel {
         return Math.random() * this.length;
     }
 
-    getViewColumn():ColumnView {
-
+    private setColumnView() {
         this.currentView = this.current;
         for (let ind = 0; ind < this.heightView; ind++) {
-            this.columnView.view[ind] = this.currentView.symbol;
+            this.columnView.view[ind] = this.currentView;
             this.currentView = this.currentView.next;
         }
         this.columnView.stopPosition = this.current.position;
+    }
+
+    getViewColumn():ColumnView {
+
         return this.columnView;
     }
 
     setPosition(position: number) {
         this.current = this.head;
         this.rotate(position);
+    }
+
+    getLink(ind: number) {
+        return this.columnView.view[ind];
     }
 }

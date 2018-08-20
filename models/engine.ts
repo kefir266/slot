@@ -1,4 +1,4 @@
-import {Reel, ColumnView} from "./reel";
+import {Reel, ColumnView, Symbol} from "./reel";
 import {Config, SpinRewards} from "./game";
 import {ReelArray} from "./reelArrary";
 
@@ -8,6 +8,11 @@ export interface State {
     rewards: SpinRewards[];
 }
 
+export interface Linkedline {
+    symbol?: Symbol;
+    next?: Linkedline;
+}
+
 export class Engine {
     reels: Array<Reel | ReelArray> = [];
     // I don't image how to handle views with different heights,
@@ -15,17 +20,28 @@ export class Engine {
     viewHeight: number;
     state: State;
     lines: number[][];
+    linkedLineHead: Linkedline[] = [];
+    linkedLineCurrent: Linkedline[] = [];
+
 
     constructor(config: Config, rotatedReel = true) {
         //take height in fist element, because suggested that height constantly
         this.viewHeight = config.view[0];
         this.lines = config.lines;
-        const reelModel = rotatedReel ? Reel: ReelArray;
+        const reelModel = rotatedReel ? Reel : ReelArray;
+
+        for (let ind = 0; ind < this.viewHeight; ind++) {
+            this.linkedLineHead[ind] = {};
+            this.linkedLineCurrent[ind] = this.linkedLineHead[ind];
+        }
+
         config.reels.forEach((reel, index) => {
             this.reels.push(new reelModel(reel, config.view[index]));
+            this.setLinks(this.reels[index], index);
         });
 
         this.initView();
+        this.setStopPosition();
     }
 
     private initView() {
@@ -36,43 +52,48 @@ export class Engine {
     }
 
     start(dontRotate = false): State {
-
-        this.mergeVIew(this.reels.map(reel => {
-            if (dontRotate) {
-                return reel.getViewColumn();
-            } else {
+        if (!dontRotate) {
+            this.reels.forEach(reel => {
                 return reel.rotate();
-            }
-        }));
+            });
+        }
+        this.setStopPosition();
         this.determineRewards();
         return this.state;
 
     }
 
-    private mergeVIew(columns: ColumnView[]) {
-        for (let col = 0; col < columns.length; col++) {
-            this.state.stopPositions[col] = columns[col].stopPosition;
-            for (let line = 0; line < this.viewHeight; line++) {
-                this.state.view[line][col] = columns[col].view[line];
-            }
-        }
+    private setLinks(reel: Reel | ReelArray, numberOfReel: number) {
+        this.linkedLineCurrent.forEach( (line, ind) => {
+            line.symbol = reel.getLink(this.lines[ind][numberOfReel]);
+            line.next = { };
+            this.linkedLineCurrent[ind] = line.next;
+        });
     }
 
     private determineRewards(): State {
-
-        this.state.rewards = this.lines.map((line, lineId) => {
-            const spinReward: SpinRewards = {lineId: lineId, symbol: this.state.view[line[0]][0], payout: 0};
-            const lineReward = line.map((lineId, ind) => {
-                return this.state.view[lineId][ind];
-            });
-            if (lineReward.every(spin => {
-                return spinReward.symbol === spin;
-            })) {
-                return spinReward;
+        this.state.rewards = this.linkedLineHead.map((line, lineId) => {
+            const firstSymbol = line.next.symbol.symbol;
+            let current = line.next;
+            let every = true;
+            do {
+                every = every && (firstSymbol === current.symbol.symbol);
+                current = current.next;
+            } while (current.next && every);
+            if (every) {
+                return {lineId, symbol: firstSymbol, payout: 0};
             }
         })
             .filter(reward => reward);
         return this.state;
+    }
+
+    private setStopPosition() {
+        this.linkedLineCurrent[0] = this.linkedLineHead[0];
+        for (let ind = 0; ind < this.reels.length; ind++) {
+            this.state.stopPositions[ind] = this.linkedLineCurrent[0].symbol.position;
+            this.linkedLineCurrent[0] = this.linkedLineCurrent[0].next;
+        }
     }
 
     setPositions(positions: number []) {
