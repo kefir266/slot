@@ -1,4 +1,4 @@
-import {Reel, Symbol} from "./reel";
+import {Observer, Reel, Symbol} from "./reel";
 import {Config, SpinRewards} from "./game";
 
 export interface State {
@@ -15,7 +15,7 @@ export class Engine {
     private viewHeight: number;
     private state: State;
     private lines: number[][];
-    private observers: Symbol[][] = [];
+    private observers: Observer[][] = [];
 
 
     constructor(config: Config, rotatedReel = true) {
@@ -28,28 +28,29 @@ export class Engine {
         }
         config.reels.forEach((reel, indexOfReels) => {
             this.reels.push(new Reel(reel));
-            let head = this.reels[indexOfReels].getLinkOfHead();
-            for (let ind = 0; ind < this.viewHeight; ind++) {
-                this.observers[ind][indexOfReels] = this.reels[indexOfReels].addOserver(head);
-                head = head.next;
-            }
+            this.initObservers(indexOfReels);
         });
 
         this.initView();
         this.setStopPosition();
     }
 
+    private initObservers(indexOfReels: number) {
+        let head = this.reels[indexOfReels].getLinkOfHead();
+        for (let ind = 0; ind < this.viewHeight; ind++) {
+            this.observers[ind][indexOfReels] = this.observable(head);
+            this.reels[indexOfReels].addOserver(this.observers[ind][indexOfReels]);
+            head = head.next;
+        }
+    }
     private initView() {
         this.state = {stopPositions: [], view: [], rewards: []};
-        for (let ind = 0; ind < this.viewHeight; ind++) {
-            this.state.view[ind] = [];
-        }
     }
 
     start(dontRotate = false): State {
         if (!dontRotate) {
             this.reels.forEach(reel => {
-                const obs = reel.rotate();
+                reel.rotate();
             });
         }
         this.setStopPosition();
@@ -57,7 +58,6 @@ export class Engine {
         this.determineRewards();
 
         return this.state;
-
     }
 
 
@@ -67,9 +67,9 @@ export class Engine {
 
             //simplify task - suggest it can't be zigzag
             const lineId = this.lines[ind][0];
-            const firstSymbol = this.state.view[ind][0];
-            if (this.observers[ind].every(symbol => firstSymbol === symbol.symbol)) {
-                this.state.rewards.push({ lineId, symbol: firstSymbol, payout: 0 });
+            const firstSymbol = this.observers[ind][0].get();
+            if (this.observers[ind].every(symbol => firstSymbol === symbol.get())) {
+                this.state.rewards.push({lineId, symbol: firstSymbol, payout: 0});
             }
         }
 
@@ -77,7 +77,7 @@ export class Engine {
     }
 
     private setStopPosition() {
-        this.state.stopPositions = this.reels.map( symbol => symbol.getStopPositions());
+        this.state.stopPositions = this.reels.map(symbol => symbol.getStopPositions());
     }
 
     setPositions(positions: number []) {
@@ -87,6 +87,19 @@ export class Engine {
     }
 
     setView() {
-        this.state.view = this.observers.map( line => line.map( symbol => symbol.symbol));
+        this.state.view = this.observers.map(line => line.map(observer => observer.get()));
+    }
+
+    observable(initSymbol: Symbol): Observer {
+        let symbol = initSymbol;
+        return {
+            rotate: (pos: number) => {
+                for (let ind = 0; ind < pos; ind++) {
+                    symbol = symbol.next;
+                }
+            },
+            get: () => symbol.symbol,
+            init: () => symbol = initSymbol
+        };
     }
 }
