@@ -2,7 +2,7 @@ import * as child from 'child_process';
 import * as os from 'os';
 import * as fs from "fs";
 
-const NUMBER_OF_GAMES = 10000000;
+const NUMBER_OF_GAMES = 1000000;
 const slotWorker = './models/tt-game.ts';
 
 const numOfCpus = os.cpus().length;

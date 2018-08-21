@@ -4,6 +4,12 @@ export interface Symbol {
     position: number;
 }
 
+export interface Observer {
+    init: Function;
+    rotate: Function;
+    get: Function;
+}
+
 export interface ColumnView {
     stopPosition: number;
     view: Symbol[];
@@ -15,8 +21,7 @@ export class Reel {
     private length: number;
     private columnView: ColumnView = {stopPosition: 0, view: []};
     private currentView = this.current;
-    observers: Symbol[] = [];
-    private initObservers: Symbol[] = [];
+    observers: Observer[] = [];
 
     constructor(reel: number[]) {
         reel.forEach((symbol, index) => {
@@ -42,16 +47,12 @@ export class Reel {
         }
         this.columnView.stopPosition = this.current.position;
         this.rotateOservers(pos);
-        //this.setColumnView();
-        //return this.getViewColumn();
     }
 
     private rotateOservers(pos: number) {
-        for(let i = 0; i < pos; i++) {
-            this.observers.forEach((observer, ind) => {
-                this.observers[ind] = observer.next;
-            });
-        }
+        this.observers.forEach( observer => {
+            observer.rotate(pos);
+        });
     }
 
     private accelerate(): number {
@@ -60,17 +61,15 @@ export class Reel {
 
     setPosition(position: number) {
         this.current = this.head;
-        //init observers to zero position
-        this.initObservers.forEach((observer, ind) => {
-            this.observers[ind] = observer;
-        });
         this.rotate(position);
+        this.observers.forEach( observer => {
+            observer.init();
+            observer.rotate(position);
+        });
     }
 
-    addOserver(symbol: Symbol) {
-        this.observers.push(symbol);
-        this.initObservers.push(symbol);
-        return symbol;
+    addOserver(observer: Observer) {
+        this.observers.push(observer);
     }
 
     getLinkOfHead() {
