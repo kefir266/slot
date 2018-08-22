@@ -8,6 +8,7 @@
     "removeComments": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "outDir": "./output",
     "paths": {
       "*": [
         "node_modules/*"

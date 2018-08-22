@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -r ts-node/register ./tests/*.spec.ts",
-    "start": "node $NODE_DEBUG_OPTION ./node_modules/.bin/ts-node -- ./index.ts"
+    "build": "tsc",
+    "debug": "node $NODE_DEBUG_OPTION ./node_modules/.bin/ts-node -- ./index.ts",
+    "start": "tsc && node ./node_modules/.bin/ts-node -- ./output/index.js"
   },
   "author": "Kefir",
   "license": "ISC",
