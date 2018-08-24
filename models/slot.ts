@@ -37,6 +37,7 @@ export class Slot extends Engine {
         this.result.view = views.view;
         this.result.rewards = views.rewards;
         this.result.bet = this.bet;
+        this.result.win = 0;
         this.calculateRewards();
         return this.result;
     }

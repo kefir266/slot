@@ -3,11 +3,11 @@ import * as os from 'os';
 import * as fs from "fs";
 
 const NUMBER_OF_GAMES = 1000000000;
-const slotWorker = './models/tt-game.ts';
+const slotWorker = `${__dirname}/models/tt-game`;
 
 const numOfCpus = os.cpus().length;
 const numOfGamesPerCPU = NUMBER_OF_GAMES / (numOfCpus || 1);
-const params: ReadonlyArray<string> = [`--numbersOfGames=${numOfGamesPerCPU}`, `--bet=1`];
+const params: ReadonlyArray<string> = [`--numbersOfGames=${numOfGamesPerCPU}`, `--bet=1`, `rolling=1`];
 
 const games = {wins: 0, loses: 0};
 const startTime = new Date();
