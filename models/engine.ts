@@ -59,19 +59,18 @@ export class Engine {
     }
 
     private determineRewards(): State {
-
-        this.state.rewards = this.lines.map((line, lineId) => {
-            const spinReward: SpinRewards = {lineId, symbol: this.state.view[line[0]][0], payout: 0};
-            const lineReward = line.map((lineId, ind) => {
-                return this.state.view[lineId][ind];
-            });
-            if (lineReward.every(spin => {
-                return spinReward.symbol === spin;
-            })) {
-                return spinReward;
-            }
-        })
-            .filter(reward => reward);
+         this.state.rewards = [];
+         this.lines.forEach((line, lineId) => {
+             const firstSpin = this.state.view[line[lineId]][0];
+             let isDiferent = false;
+             for(let ind = 0; ind < line.length; ind++) {
+                 isDiferent = isDiferent || (this.state.view[line[lineId]][ind] !== firstSpin);
+                 if (isDiferent) break;
+             }
+             if (!isDiferent) {
+                 this.state.rewards.push({lineId, symbol: firstSpin, payout: 0});
+             }
+         });
         return this.state;
     }
 
